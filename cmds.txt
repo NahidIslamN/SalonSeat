@@ -1,0 +1,9 @@
+
+
+
+
+
+python manage.py runserver
+
+# this one for
+celery -A SalonSeat worker -B --loglevel=info
