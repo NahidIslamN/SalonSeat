@@ -6,6 +6,11 @@ from auths.models import CustomUser
 class Photo_Media(models.Model):
     images = models.ImageField(upload_to='listings')
 
+    def delete(self, using=None, keep_parents=False):
+        if self.images:
+            self.images.delete(save=False)
+        return super().delete(using=using, keep_parents=keep_parents)
+
 
 class Listing(models.Model):
     crearor = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -42,7 +47,7 @@ class Listing(models.Model):
     rental_type = models.CharField(max_length=250)
     lease_terms = models.CharField(max_length=250)
     price = models.DecimalField(max_digits=9, decimal_places=2)
-    availability_status = models.CharField(max_length=250, choices=STATUS, default='draft')
+    availability_status = models.CharField(max_length=250, choices=STATUS, default='paused')
     maximum_cccupancy = models.IntegerField()
 
     # Photos & Media
@@ -51,5 +56,15 @@ class Listing(models.Model):
     restrictions = models.TextField()
     additional_notes = models.TextField()
 
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return f"ID:{self.id} - {self.businessname} - {self.listing_title}"
+
+    def delete(self, using=None, keep_parents=False):
+        for photo in self.photos.all():
+            is_used_elsewhere = photo.photos_and_media.exclude(pk=self.pk).exists()
+            if not is_used_elsewhere:
+                photo.delete()
+        return super().delete(using=using, keep_parents=keep_parents)

@@ -25,7 +25,8 @@ urlpatterns = [
     path('api/v1/auth/', include('auths.urls')),
     path('api/v1/', include('chats.urls')),
     path('api/v1/profiles/', include('profiles.urls')),
-    # profiles
+    path('api/v1/owners/', include('salun_owner_app.urls')),
+    
 ]
 # path('blog/', include('blog.urls'))
 

@@ -12,6 +12,8 @@ staticfiles/
 # Database
 *.sqlite3
 
+docs/
+
 # Celery
 celerybeat-schedule
 celerybeat.pid
