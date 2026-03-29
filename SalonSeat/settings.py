@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'jayla_models',
     'profiles',
     'salun_owner_app',
+    'admin_dashboard',
 ]
 
 
