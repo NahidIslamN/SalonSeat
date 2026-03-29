@@ -27,6 +27,7 @@ class ListingReadSerializer(serializers.ModelSerializer):
 		fields = [
 			"id",
 			"is_admin_approved",
+			"is_admin_rejected",
 			"businessname",
 			"listing_title",
 			"street_address",

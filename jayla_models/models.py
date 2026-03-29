@@ -15,6 +15,7 @@ class Photo_Media(models.Model):
 class Listing(models.Model):
     crearor = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     is_admin_approved = models.BooleanField(default=False)
+    is_admin_rejected = models.BooleanField(default=False)
 
     #Basic Information
     businessname = models.CharField(max_length=250)
@@ -55,6 +56,8 @@ class Listing(models.Model):
 
     restrictions = models.TextField()
     additional_notes = models.TextField()
+
+    is_deleted = models.BooleanField(default=False)
 
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)

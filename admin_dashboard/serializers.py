@@ -5,11 +5,11 @@ from auths.models import CustomUser
 
 class PhotoMediaReadSerializerAdmin(serializers.ModelSerializer):
 	url = serializers.SerializerMethodField()
-
+	
 	class Meta:
 		model = Photo_Media
 		fields = ["id", "url"]
-
+		
 	def get_url(self, obj):
 		if not obj.images:
 			return None
@@ -24,7 +24,6 @@ class CustomUserSerializerAdmin(serializers.ModelSerializer):
 		model = CustomUser
 		fields = [
             "email",
-            "password",
             "full_name",
             "phone",
             "user_role",
@@ -32,17 +31,18 @@ class CustomUserSerializerAdmin(serializers.ModelSerializer):
             "latitude",
             "longitude",
         ]
-	
+
+
 class ListingReadSerializerAdmin(serializers.ModelSerializer):
 	photos = PhotoMediaReadSerializerAdmin(many=True, read_only=True)
 	crearor = CustomUserSerializerAdmin(read_only=True)
-	
 	class Meta:
 		model = Listing
 		fields = [
 			"id",
 			"crearor",
 			"is_admin_approved",
+			"is_admin_rejected",
 			"businessname",
 			"listing_title",
 			"street_address",
@@ -70,12 +70,14 @@ class ListingReadSerializerAdmin(serializers.ModelSerializer):
 			"create_at",
 			"update_at",
 		]
-
+		
 
 class ListingWriteSerializerAdmin(serializers.ModelSerializer):
 	class Meta:
 		model = Listing
 		fields = [
+			"is_admin_approved",
+			"is_admin_rejected",
 			"businessname",
 			"listing_title",
 			"street_address",

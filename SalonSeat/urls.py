@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/v1/admin/', include('admin_dashboard.urls')),
     
 ]
+
 # path('blog/', include('blog.urls'))
 
 if settings.DEBUG:
