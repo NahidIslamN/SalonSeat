@@ -141,7 +141,78 @@ class ListingAdminView(APIView):
             {"success": True, "message": "Listing deleted permanently."},
             status=status.HTTP_200_OK,
         )
+    
 
+
+
+
+
+
+
+
+
+########################## user management #############################
+
+class UsersAdminView(APIView):
+    permission_classes=[IsAdminUser]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+    
+    def _get_user(self, request, pk):
+        return CustomUser.objects.filter(pk=pk).first()
+
+    def get(self, request, pk=None):
+        if pk:
+            user = self._get_user(request, pk)
+            if user is None:
+                return Response(
+                    {"success": False, "message": "User not found."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            return Response(
+                {
+                    "success": True,
+                    "data": CustomUserSerializer(user, context={"request": request}).data,
+                },
+                status=status.HTTP_200_OK,
+            )
+        
+        users = CustomUser.objects.all().order_by('-created_at')
+        paginator = CustomPagination()
+        page = paginator.paginate_queryset(users, request, view=self)
+        serializer = CustomUserSerializer(page, many=True, context={"request": request})
+        return paginator.get_paginated_response(serializer.data)
+
+    def put(self, request, pk):
+        return self._update(request, pk, partial=False)
+
+    def patch(self, request, pk):
+        return self._update(request, pk, partial=True)
+
+    def _update(self, request, pk, partial):
+        user = self._get_user(request, pk)
+        if user is None:
+            return Response(
+                {"success": False, "message": "User not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = CustomUserSerializer(user, data=request.data, partial=partial, context={"request": request})
+        if not serializer.is_valid():
+            return Response(
+                {"success": False, "errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        updated_user = serializer.save()
+        return Response(
+            {
+                "success": True,
+                "message": "User updated successfully.",
+                "data": CustomUserSerializer(updated_user, context={"request": request}).data,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 

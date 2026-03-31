@@ -102,3 +102,89 @@ class ListingWriteSerializerAdmin(serializers.ModelSerializer):
 			"restrictions",
 			"additional_notes",
 		]
+
+
+
+
+
+
+
+
+################################### user management admin ######################################
+
+
+from rest_framework import serializers
+from auths.models import CustomUser
+from profiles.models import UserProfile
+import os
+from django.core.files.base import ContentFile
+
+
+class UserProfileSerializerAdmin(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = [
+            'id',
+            'business_name',
+            'address',
+            'date_of_birth',
+            'gender',
+            'city',
+            'country',
+            'postal_code',
+            'bio',
+            'website',
+            'facebook',
+            'linkedin',
+            'twitter',
+            'company',
+            'job_title'
+        ]
+
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializerAdmin(read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id',
+            'email',
+            'full_name',
+            'phone',
+            'user_role',
+            'image',
+            'is_active',
+            'is_staff',
+            'is_email_verified',
+            'status',
+            'created_at',
+            'profile'
+        ]
+        read_only_fields = ['id', 'email', 'created_at']
+
+    def update(self, instance, validated_data):
+        image = validated_data.pop('image', None)
+
+        instance.full_name = validated_data.get('full_name', instance.full_name)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.is_staff = validated_data.get('is_staff', instance.is_staff)
+        instance.status = validated_data.get('status', instance.status)
+
+        if image:
+            if instance.image:
+                try:
+                    instance.image.delete(save=False)
+                except Exception:
+                    pass
+
+            original_name = image.name
+            ext = os.path.splitext(original_name)[1]
+            new_filename = f"profile/{instance.id}{ext}"
+            instance.image.save(new_filename, image, save=False)
+
+        instance.save()
+        return instance
+
+
+
