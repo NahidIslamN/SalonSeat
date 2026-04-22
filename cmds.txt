@@ -7,3 +7,7 @@ python manage.py runserver
 
 # this one for
 celery -A SalonSeat worker -B --loglevel=info
+
+
+git push origin main
+git push gitlab main
