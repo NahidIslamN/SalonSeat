@@ -20,7 +20,15 @@ class SalunListingView(APIView):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request):
-        listings = Listing.objects.filter(crearor=request.user).order_by("-create_at")
+        filter_by = request.GET.get("filter_by")
+        if filter_by:
+            listings = Listing.objects.filter(
+            creator=request.user,
+            availability_status__icontains=filter_by
+        ).order_by("-create_at")
+        else:
+            listings = Listing.objects.filter(creator=request.user).order_by("-create_at")
+
         paginator = CustomPagination()
         page = paginator.paginate_queryset(listings, request, view=self)
         serializer = ListingReadSerializer(page, many=True, context={"request": request})

@@ -13,7 +13,7 @@ class Photo_Media(models.Model):
 
 
 class Listing(models.Model):
-    crearor = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     is_admin_approved = models.BooleanField(default=False)
     is_admin_rejected = models.BooleanField(default=False)
 
