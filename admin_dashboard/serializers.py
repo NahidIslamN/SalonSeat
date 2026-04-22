@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from jayla_models.models import Listing, Photo_Media
 from auths.models import CustomUser
+from .models import ContentModel
 
 
 class PhotoMediaReadSerializerAdmin(serializers.ModelSerializer):
@@ -185,6 +186,16 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+
+
+
+
+class ContentModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentModel
+        fields = "__all__"
 
 
 

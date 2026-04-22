@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import *
 
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from chats.tasks import sent_note_to_user
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
@@ -213,6 +213,115 @@ class UsersAdminView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+    
+
+
+
+
+class ContentManagementViewAdmin(APIView):
+    permission_classes = [AllowAny]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    
+    def get(self, request):
+        content_type = request.GET.get('type', None)
+        if content_type:
+            contents = ContentModel.objects.filter(status = content_type)
+        else:
+            contents = ContentModel.objects.filter()
+
+            
+        
+        serializer = ContentModelSerializer(contents, many=True)
+
+        return Response(
+            {
+                "success":True,
+                "message":"Data fatched!",
+                "content":serializer.data
+            }
+        )
+
+
+
+
+class ContentManagementViewAdmin(APIView):
+    permission_classes = [IsAdminUser]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    
+    def get(self, request):
+        content_type = request.GET.get('type', None)
+        if content_type:
+            contents = ContentModel.objects.filter(status = content_type)
+        else:
+            contents = ContentModel.objects.filter()
+
+            
+        
+        serializer = ContentModelSerializer(contents, many=True)
+
+        return Response(
+            {
+                "success":True,
+                "message":"Data fatched!",
+                "content":serializer.data
+            }
+        )
+    
+    def patch(self, request, pk):
+        try:
+            content = ContentModel.objects.get(id=pk)
+            serializer = ContentModelSerializer(content, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    {
+                        "success":True,
+                        "message":"save successfully!",
+                        "content":serializer.data
+                    }
+                )
+            else:
+                return Response(
+                    {
+                        "message":"validation errors",
+                        "status":status.HTTP_200_OK,
+                        "erros":serializer.errors
+                    }
+                )
+
+        except:
+            return Response(
+                {
+                    "message":"content not found!",
+                    "status":status.HTTP_400_BAD_REQUEST,
+                }
+                
+            )
+    
+
+
+    def delete(self, request, pk):
+        try:
+            content = ContentModel.objects.get(id=pk)
+            content.delete()
+            return Response(
+                {
+                    "message":"delete success",
+                    "status":status.HTTP_200_OK,
+                    
+                }
+            )
+
+        except:
+            return Response(
+                {
+                    "message":"content not found!",
+                    "status":status.HTTP_400_BAD_REQUEST,
+                }
+                
+            )
+
+
 
 
 
