@@ -26,6 +26,9 @@ class Listing(models.Model):
     country = models.CharField(max_length=250)
     map_link = models.URLField(verbose_name="listing location") 
 
+    longitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True)
+    latitude = models.DecimalField(max_digits=30, decimal_places=15, null=True, blank=True)
+
 
     #Amenities
     is_wifi = models.BooleanField(default=False)
