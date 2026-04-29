@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/v1/owners/', include('salun_owner_app.urls')),
     path('api/v1/admin/', include('admin_dashboard.urls')),
     path('api/v1/bpes/', include('bpes.urls')),
+    path('api/v1/subscribtions/', include('subscribtions.urls'))
         
 ]
 

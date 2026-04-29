@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'salun_owner_app',
     'admin_dashboard',
     'bpes',
+    'subscribtions',
 ]
 
 
